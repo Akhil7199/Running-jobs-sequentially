@@ -1,0 +1,44 @@
+# Step 1: Define the name for the workflow
+name: Sequentialn Jobs
+
+# Step 2: Define the trigger conditions for the workflow
+# (Defining when the workflow should run)
+on:
+  push:
+    branches:
+      - seqjob
+  pull_request:
+    branches:
+      - seqjob
+
+
+#Step 3: Defining job 1
+#This job checks out the repo, builds the image and then runs it
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Build Docker image for Job 1
+        run: docker build -t my-java-app:job1 .
+
+     # - name: Run Job 1 inside Docker
+     #   run: docker run my-java-app:job1 .
+
+#Step 4: Defining job 2
+#Job 2 depends on job 1, i.e., This job will only run after the first job completes successfully
+#This job checks out the repo, builds the image and then runs it
+job2:
+  needs: job1
+  runs-on: ubuntu-latest
+  steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+
+    - name: Build Docker image for Job 2
+      run: docker build -t my-java-app:job2 .
+
+   # - name: Run Job 1 inside Docker
+   #   run: docker run my-java-app:job1 .
